@@ -51,9 +51,9 @@ const syncData = async (req, res) => {
                 await Plots.update({
                     deleted: true,
                 },
-                {
-                    where: { id: dbPlot.id }
-                }
+                    {
+                        where: { id: dbPlot.id }
+                    }
                 )
                 console.log(`Parcela eliminada de la base de datos: ${dbPlot.api_id}`);
             } else if (existingPlotInApi && dbPlot.deleted === true) {
@@ -66,11 +66,11 @@ const syncData = async (req, res) => {
                     last_watering: existingPlotInApi.ultimo_riego,
                     latitude: existingPlotInApi.latitud,
                     longitude: existingPlotInApi.longitud,
-                }, 
-                {
-                    where: { id: dbPlot.id }
-                }
-            );
+                },
+                    {
+                        where: { id: dbPlot.id }
+                    }
+                );
                 console.log(`Parcela restaurada: ${dbPlot.api_id}`);
             }
         }
@@ -101,27 +101,31 @@ const syncData = async (req, res) => {
 
                 console.log(`Nueva parcela creada: ${newPlot.id}`);
             } else {
+                // console.log('existingPlotDb', existingPlotDb.toJSON())
                 const changedData =
-                    existingPlotDb.name !== plot.nombre ||
-                    existingPlotDb.location !== plot.ubicacion ||
-                    existingPlotDb.responsible !== plot.responsable ||
-                    existingPlotDb.crop_type !== plot.tipo_cultivo ||
-                    existingPlotDb.last_watering !== plot.ultimo_riego ||
-                    existingPlotDb.latitude !== plot.latitud ||
-                    existingPlotDb.longitude !== plot.longitud;
+                    (console.log('Comparando nombre:', existingPlotDb.name, 'vs', plot.nombre), existingPlotDb.name !== plot.nombre) ||
+                    (console.log('Comparando ubicación:', existingPlotDb.location, 'vs', plot.ubicacion), existingPlotDb.location !== plot.ubicacion) ||
+                    (console.log('Comparando responsable:', existingPlotDb.responsible, 'vs', plot.responsable), existingPlotDb.responsible !== plot.responsable) ||
+                    (console.log('Comparando tipo de cultivo:', existingPlotDb.crop_type, 'vs', plot.tipo_cultivo), existingPlotDb.crop_type !== plot.tipo_cultivo) ||
+                    (console.log('Comparando último riego:', existingPlotDb.last_watering, 'vs', plot.ultimo_riego), existingPlotDb.last_watering !== plot.ultimo_riego) ||
+                    (console.log('Comparando latitud:', existingPlotDb.latitude, 'vs', plot.latitud), existingPlotDb.latitude !== plot.latitud) ||
+                    (console.log('Comparando longitud:', existingPlotDb.longitude, 'vs', plot.longitud), existingPlotDb.longitude !== plot.longitud);
+
+                console.log('changedData:', changedData);
+
 
                 if (changedData) {
-                    await IndividualSensors.update({
+                    await Plots.update({
                         name: plot.nombre,
                         location: plot.ubicacion,
                         responsible: plot.responsable,
                         crop_type: plot.tipo_cultivo,
                         last_watering: plot.ultimo_riego,
-                        latitude: plot.latitud,
-                        longitude: plot.longitud,
+                        latitude: parseFloat(plot.latitud),
+                        longitude: parseFloat(plot.longitud),
                     },
                         {
-                            where: { plotId: existingPlotDb.id }
+                            where: { id: existingPlotDb.id }
                         }
                     );
 
@@ -144,13 +148,64 @@ const syncData = async (req, res) => {
             }
         }
 
-        const finalPlots = await Plots.findAll({ where: { accountId: account.id } });
-        const finalSensorsForPlots = await IndividualSensors.findAll({ where: { plotId: { [Op.in]: finalPlots.map(plot => plot.id) } } });
+        const finalPlots = await Plots.findAll({
+            where: { accountId: account.id },
+            attributes : [
+                'id',
+                'name',
+                'location',
+                'responsible',
+                'crop_type',
+                'last_watering',
+                'latitude',
+                'longitude',
+                'api_id',
+                'deleted'
+            ],
+            include : {
+                model : IndividualSensors,
+            }
+        });
+
+        const data = finalPlots.map((plot) => {
+            return {
+                id: plot.id,
+                name: plot.name,
+                location: plot.location,
+                responsible: plot.responsible,
+                crop_type: plot.crop_type,
+                last_watering: plot.last_watering,
+                latitude: plot.latitude,
+                longitude: plot.longitude,
+                api_id: plot.api_id,
+                deleted: plot.deleted,
+                sensors: {
+                    temperature: plot.IndividualSensor.temperature,
+                    humidity: plot.IndividualSensor.humidity,
+                    rainfall: plot.IndividualSensor.rainfall,
+                    sunlight: plot.IndividualSensor.sunlight,
+                    plotId: plot.IndividualSensor.plotId
+                }
+            }
+        })
+
+        // const finalSensorsForPlots = await IndividualSensors.findAll({
+        //     where: {
+        //         plotId: { [Op.in]: finalPlots.map(plot => plot.id) }
+        //     }
+        // });
 
         res.send({
             msg: 'Sincronización completada',
-            plots: finalPlots,
-            sensors: finalSensorsForPlots
+            sensores : {
+                temperatura : generalSensor.temperature,
+                humedad : generalSensor.humidity,
+                lluvia : generalSensor.rainfall,
+                sol : generalSensor.sunlight
+            },
+            parcelas : data
+            // plots: finalPlots,
+            // sensors: finalSensorsForPlots
         });
 
     } catch (error) {

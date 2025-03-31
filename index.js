@@ -13,8 +13,10 @@ import IndividualSensors from './models/IndividualSensors.js';
 import authRoutes from './routes/auth.js';
 import fakeApiRoutes from './routes/fakeApi.js'
 import consumeApiRoutes from './routes/consumeApi.js'
-
+import jwt from 'jsonwebtoken';
 dotenv.config();
+import { verifyOtp } from './controllers/auth.js';
+
 const app = express();
 
 // middlewares
@@ -23,8 +25,22 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 
+const middlewareJWT = (req, res, next) =>{
+    const token = req.cookies.token;
+    if(!token) return res.status(401).send({msg : 'No token provided'});
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if(err) return res.status(401).send({msg : 'Invalid token'});
+        req.user = decoded;
+        console.log('decoded', decoded);
+        next();
+    })
+}
 // routes
 app.use('/api/auth', authRoutes);
+app.use('/api/auth/verify-jwt', middlewareJWT);
+
+app.use(middlewareJWT);
 app.use('/api', fakeApiRoutes);
 app.use('/api', consumeApiRoutes)
 
@@ -52,14 +68,14 @@ app.listen(parseInt(API_PORT), () => {
             // Sincroniza los modelos con la base de datos
             await database.sync({
                 // force : true
-                alter : true
+                // alter : true
             });
             console.log('Database synced successfully');
 
-            // await Accounts.create({
-            //     name : 'sensores',
-            //     type : 'Enterprise'
-            // })
+            await Accounts.create({
+                name : 'sensores',
+                type : 'Enterprise'
+            })
             callback();
 
         } catch (error) {

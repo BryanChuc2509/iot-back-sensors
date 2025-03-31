@@ -7,8 +7,38 @@ const db = {
         sol: 90,
     },
     parcelas: [
-
- 
+        {
+            "id": 1,
+            "nombre": "Ki’ik",
+            "ubicacion": "Zona Norte",
+            "responsable": "Bryan Chuc V ",
+            "tipo_cultivo": "Te amo ",
+            "ultimo_riego": "2025-03-29 09:42:27",
+            "sensor": {
+                "humedad": 90,
+                "temperatura": 26.300000000000000710542735760100185871124267578125,
+                "lluvia": 1.1999999999999999555910790149937383830547332763671875,
+                "sol": 70
+            },
+            "latitud": 21.05572286456500563645022339187562465667724609375,
+            "longitud": -86.8694215500166109222845989279448986053466796875
+        },
+        {
+            "id": 2,
+            "nombre": "Bejorro",
+            "ubicacion": "Zona Sur",
+            "responsable": "Ana González",
+            "tipo_cultivo": "Maíz",
+            "ultimo_riego": "2025-03-29 09:42:27",
+            "sensor": {
+                "humedad": 25.10000000000000142108547152020037174224853515625,
+                "temperatura": 29,
+                "lluvia": 5.5,
+                "sol": 40
+            },
+            "latitud": 21.065584181227695381721787271089851856231689453125,
+            "longitud": -86.8964427183662877496317378245294094085693359375
+        },
         {
             "id": 4,
             "nombre": "Chikin",

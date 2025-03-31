@@ -18,7 +18,7 @@ const register = async (req, res) => {
 
     try {
 
-        const { nombre: name, contraseña: password, correo: email, rol: role } = req.body;
+        const { nombre: name, contraseña: password = [], correo: email, rol: role } = req.body;
 
         const requiredFields = ['nombre', 'contraseña', 'correo'];
 
