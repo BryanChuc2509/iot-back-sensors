@@ -20,13 +20,17 @@ import { verifyOtp } from './controllers/auth.js';
 const app = express();
 
 // middlewares
-app.use(cors());
+app.use(cors({
+    origin : 'http://localhost:5173',
+    credentials : true
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 
 const middlewareJWT = (req, res, next) =>{
-    const token = req.cookies.token;
+    let token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+    console.log('token', token);
     if(!token) return res.status(401).send({msg : 'No token provided'});
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -38,10 +42,25 @@ const middlewareJWT = (req, res, next) =>{
 }
 // routes
 app.use('/api/auth', authRoutes);
-app.use('/api/auth/verify-jwt', middlewareJWT);
+app.post('/api/auth/logout', (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: false, 
+        sameSite: 'lax'
+    });
 
-app.use(middlewareJWT);
+    res.json({ message: 'Sesión cerrada correctamente' });
+});
+app.get('/api/auth/verify-jwt', middlewareJWT, (req, res) => {
+    res.json({
+        msg : 'Token válido',
+        user : req.user
+    })
+});
+
+
 app.use('/api', fakeApiRoutes);
+app.use(middlewareJWT);
 app.use('/api', consumeApiRoutes)
 
 const {
@@ -72,10 +91,10 @@ app.listen(parseInt(API_PORT), () => {
             });
             console.log('Database synced successfully');
 
-            await Accounts.create({
-                name : 'sensores',
-                type : 'Enterprise'
-            })
+            // await Accounts.create({
+            //     name : 'sensores',
+            //     type : 'Enterprise'
+            // })
             callback();
 
         } catch (error) {

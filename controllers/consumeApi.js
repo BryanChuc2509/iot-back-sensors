@@ -198,10 +198,10 @@ const syncData = async (req, res) => {
         res.send({
             msg: 'Sincronización completada',
             sensores : {
-                temperatura : generalSensor.temperature,
-                humedad : generalSensor.humidity,
-                lluvia : generalSensor.rainfall,
-                sol : generalSensor.sunlight
+                temperature : generalSensor.temperature,
+                humidity : generalSensor.humidity,
+                rainfall : generalSensor.rainfall,
+                sunlight : generalSensor.sunlight
             },
             parcelas : data
             // plots: finalPlots,

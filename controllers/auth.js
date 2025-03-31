@@ -147,12 +147,18 @@ const verifyOtp = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            // secure: process.env.NODE_ENV === 'production',
-            maxAge: 60 * 60 * 1000, // 1 hora
-            // sameSite: 'Strict',
-        });
+        try {
+            res.cookie("token", token, {
+                // httpOnly: true,
+                // secure: process.env.NODE_ENV === 'production',
+                maxAge: 60 * 60 * 1000, // 1 hora
+                // sameSite: 'Strict',
+                credentials: true,
+                secure : false
+            });
+        } catch (error) {
+            return res.status(401).send({ msg: 'Error al verificar OTP', error: error.message });
+        }
 
         return res.send({
             msg: 'OTP verificado correctamente',
