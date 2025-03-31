@@ -1,0 +1,7 @@
+node_modules
+.env
+.vscode
+
+index.html
+test.js
+test2.js
