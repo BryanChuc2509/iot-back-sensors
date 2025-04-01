@@ -79,7 +79,7 @@ app.listen(parseInt(API_PORT), () => {
             // Sincroniza los modelos con la base de datos
             await database.sync({
                 // force : true
-                // alter : true
+                alter : true
             });
             console.log('Database synced successfully');
 
@@ -101,6 +101,7 @@ app.listen(parseInt(API_PORT), () => {
         console.log(` Fake API: http://localhost:${API_PORT}/api/fake-api`);
         console.log(` Consume API: http://localhost:${API_PORT}/api/consume-api`);
         console.log(` Plots Deleted: http://localhost:${API_PORT}/api/consume-api/plots-deleted`);
+        console.log(` Historic Data General Sensor: http://localhost:${API_PORT}/api/consume-api/historic-data-general-sensor/:limit`);
 
     });
 

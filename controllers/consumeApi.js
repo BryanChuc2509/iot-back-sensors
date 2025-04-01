@@ -7,7 +7,8 @@ import { Op } from "sequelize";
 
 const syncData = async (req, res) => {
     try {
-        const apiRequest = await fetch('http://localhost:4001/api/fake-api');
+        // const apiRequest = await fetch('http://localhost:4001/api/fake-api');
+        const apiRequest = await fetch('https://moriahmkt.com/iotapp/updated/');
         const apiData = await apiRequest.json();
         const { sensores: sensors, parcelas: plots } = apiData;
 

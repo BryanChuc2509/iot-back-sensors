@@ -25,14 +25,18 @@ const GeneralSensorsHistoric = database.define('GeneralSensorsHistoric',
             allowNull: false,
         },
         sunlight: {
-            type: DataTypes.DECIMAL(4, 2),
+            type: DataTypes.DECIMAL(6, 2),
             allowNull : false,
+        },
+        createdAt : {
+            type : DataTypes.DATE,
+            allowNull : false,
+            defaultValue : DataTypes.NOW
         }
     },
     {
         tableName : 'general_sensors_historic',
-        createdAt : 'created_at',
-        updatedAt : false,
+        timestamps : false
     }
 )
 

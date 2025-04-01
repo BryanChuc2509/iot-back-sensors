@@ -22,7 +22,7 @@ const GeneralSensors = database.define('GeneralSensors',
             allowNull: false,
         },
         sunlight: {
-            type: DataTypes.DECIMAL(4, 2),
+            type: DataTypes.DECIMAL(6, 2),
             allowNull : false,
         }, 
         createdAt : {

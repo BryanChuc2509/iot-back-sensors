@@ -7,22 +7,7 @@ const db = {
         sol: 90,
     },
     parcelas: [
-        {
-            "id": 1,
-            "nombre": "Ki’ik",
-            "ubicacion": "Zona Norte",
-            "responsable": "Bryan Chuc V ",
-            "tipo_cultivo": "Te amo ",
-            "ultimo_riego": "2025-03-29 09:42:27",
-            "sensor": {
-                "humedad": 90,
-                "temperatura": 26.300000000000000710542735760100185871124267578125,
-                "lluvia": 1.1999999999999999555910790149937383830547332763671875,
-                "sol": 70
-            },
-            "latitud": 21.05572286456500563645022339187562465667724609375,
-            "longitud": -86.8694215500166109222845989279448986053466796875
-        },
+        
         {
             "id": 2,
             "nombre": "Bejorro",
