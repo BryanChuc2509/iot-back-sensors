@@ -214,4 +214,47 @@ const syncData = async (req, res) => {
     }
 };
 
-export { syncData };
+const getPlotsDeleted = async (req, res) => {
+    try {
+        let token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
+        const response = await fetch('http://localhost:4001/api/consume-api', {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json',
+                'Authorization' : `Bearer ${token}`
+            },
+            credentials : 'include'
+        });
+        
+        if (!response.ok) {
+            return res.status(500).send({ msg: 'Error al consumir la API externa :&', error : response.statusText });
+        }
+
+        const account = await Accounts.findOne({
+            where: { id: 1 },
+            include: {
+                model: Plots,
+            }
+        });
+
+        if (!account) {
+            return res.status(404).send({ msg: 'Cuenta no encontrada' });
+        }
+
+        const deletedPlots = account.Plots.filter(plot => plot.deleted === true);
+
+        res.send({
+            msg: 'Parcelas eliminadas encontradas',
+            deletedPlots: deletedPlots
+        });
+
+    } catch (error) {
+        console.error('Error en la función:', error.message);
+        res.status(500).send({ msg: 'Error al obtener las parcelas eliminadas', error: error.message });
+    }
+}
+
+
+
+export { syncData, getPlotsDeleted};

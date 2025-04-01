@@ -42,15 +42,7 @@ const middlewareJWT = (req, res, next) =>{
 }
 // routes
 app.use('/api/auth', authRoutes);
-app.post('/api/auth/logout', (req, res) => {
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: false, 
-        sameSite: 'lax'
-    });
 
-    res.json({ message: 'Sesión cerrada correctamente' });
-});
 app.get('/api/auth/verify-jwt', middlewareJWT, (req, res) => {
     res.json({
         msg : 'Token válido',
@@ -105,8 +97,11 @@ app.listen(parseInt(API_PORT), () => {
         console.log('Rutas: ');
         console.log(` User Register: http://localhost:${API_PORT}/api/auth/register`);
         console.log(` User Login: http://localhost:${API_PORT}/api/auth/login`);
+        console.log(` Verify token JWT: http://localhost:${API_PORT}/api/auth/verify-jwt`);
         console.log(` Fake API: http://localhost:${API_PORT}/api/fake-api`);
         console.log(` Consume API: http://localhost:${API_PORT}/api/consume-api`);
+        console.log(` Plots Deleted: http://localhost:${API_PORT}/api/consume-api/plots-deleted`);
+
     });
 
 });

@@ -170,8 +170,19 @@ const verifyOtp = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: false, 
+        sameSite: 'lax'
+    });
+
+    res.json({ message: 'Sesión cerrada correctamente' });
+};
+
 export {
     register,
     login, 
-    verifyOtp
+    verifyOtp,
+    logout
 }
